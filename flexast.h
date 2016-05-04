@@ -423,6 +423,18 @@ struct range {
   char *filename;
   struct location start;
   struct location end;
+};
+
+void
+free_range(struct range *r)
+{
+  while (r) {
+    struct range *next = r->next;
+    if (r->filename) {
+      free(r->filename);
+    }
+    r = next;
+  }
 }
 
 struct range *
@@ -439,19 +451,7 @@ new_range(char *filename, int start_line, int start_col, int end_line,
   }
   init_location(&(r->start), filename, start_line, start_col);
   init_location(&(r->end), filename, end_line, end_col);
-  return 1;
-}
-
-void
-free_range(struct range *r)
-{
-  while (r) {
-    struct range *next = r->next;
-    if (r->filename) {
-      free(r->filename);
-    }
-    r = next;
-  }
+  return r;
 }
 
 struct range *
@@ -472,16 +472,18 @@ range_of_position(struct position *p)
   }
 }
 
-struct token {
+struct symbol {
+  struct symbol *next;
   struct range *location;
   int token;
   char *text;
+  struct symbol *children;
 };
 
-struct token *
+struct symbol *
 make_token()
 {
-  struct token *t = (struct token *) astmalloc(sizeof(struct token));
+  struct symbol *t = (struct symbol *) astmalloc(sizeof(struct symbol));
   if (!t) { return 0; }
   struct range *p = range_of_position(scanner.pstack);
   if (!p) {
@@ -489,20 +491,20 @@ make_token()
     return 0;
   }
   t->location = p;
-  t->token = scanner.lasttoken;
+  t->token = scanner.last_token;
   t->text = clone_string(yytext, yyleng);
   return t;
 }
 
-struct token *
+struct symbol *
 read_token(void)
 {
   if (!is_scanning()) {
     /* TODO: error */
     return 0;
   }
-  scanner.lasttoken = yylex();
-  if (!scanner.lasttoken) {
+  scanner.last_token = yylex();
+  if (!scanner.last_token) {
     /* out of tokens */
     return 0;
   }
@@ -510,14 +512,18 @@ read_token(void)
   return make_token();
 }
 
-struct token *
+struct symbol *
 last_token()
 {
-  if (!is_scanning() || !scanner.lasttoken) {
+  if (!is_scanning() || !scanner.last_token) {
     /* TODO: error */
     return 0;
   }
   return make_token();
 }
 
+struct token_values {
+    char *name;
+    int value;
+};
 /* maketokens */

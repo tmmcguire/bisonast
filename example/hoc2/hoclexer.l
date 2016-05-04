@@ -37,8 +37,8 @@
 */
 
 %{
-#include "hocgrammar.h"
-#include "FlexModule.h"
+#include "hocgrammar.tab.h"
+#include "flexast.h"
 %}
 
 num	[0-9]*\.?[0-9]+
@@ -56,10 +56,10 @@ str	\"([^"\\\n]|\\.)*\"
 
 %%
 
-TokenValues module_tokens[] = {
+struct token_values module_tokens[] = {
 	{"NUMBER", NUMBER},
 	{"VAR", VAR},
 	{0,0}
 };
 
-FLEXMODULEINIT(hoclexer, module_tokens);
+// FLEXMODULEINIT(hoclexer, module_tokens);
