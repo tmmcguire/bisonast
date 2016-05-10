@@ -2,8 +2,6 @@ all : hoc2 lex.yy.o hocgrammar.tab.c hocgrammar.tab.h
 
 hoc2 : hoc2.o lex.yy.o
 
-hoc2.o : hoc2.c
-
 lex.yy.o : lex.yy.c hocgrammar.tab.h
 
 lex.yy.c : hoclexer.l

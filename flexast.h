@@ -368,7 +368,7 @@ on_file_name(char *filename)
  * - A file name, for position recording.
  * - A FILE pointer open for reading.
  */
-static int
+int
 on_file_pointer(char *filename, FILE *file)
 {
   if (is_scanning()) {
@@ -387,7 +387,7 @@ on_file_pointer(char *filename, FILE *file)
  *
  * Returns true on success, false otherwise.
  */
-static int
+int
 close_scanner()
 {
   if (!is_scanning()) {
