@@ -459,7 +459,6 @@ range_of_position(struct position *p)
 {
   if (p) {
     struct range *r_next = range_of_position(p->next);
-    if (!r_next) { return 0; }
     struct range *r = new_range(p->filename, p->pre_line, p->pre_col,
       p->cur_line, p->cur_col-1, r_next);
     if (!r) {
